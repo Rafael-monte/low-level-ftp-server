@@ -1,95 +1,95 @@
-#include <stdio.h> 
-#include <netdb.h> 
-#include <netinet/in.h> 
-#include <stdlib.h> 
-#include <string.h> 
-#include <sys/socket.h> 
-#include <sys/types.h> 
-#include <unistd.h> // read(), write(), close()
-#define MAX 80 
-#define PORT 8080 
-#define SA struct sockaddr 
-// Function designed for chat between client and server. 
-void func(int connfd) 
-{ 
-	char buff[MAX]; 
-	int n; 
-	// infinite loop for chat 
-	for (;;) { 
-		bzero(buff, MAX); 
+#include "../log.h"
+#include "server.hpp"
 
-		// read the message from client and copy it in buffer 
-		read(connfd, buff, sizeof(buff)); 
-		// print buffer which contains the client contents 
-		printf("From client: %s\t To client : ", buff); 
-		bzero(buff, MAX); 
-		n = 0; 
-		// copy server message in the buffer 
-		while ((buff[n++] = getchar()) != '\n') 
-			; 
-
-		// and send that buffer to client 
-		write(connfd, buff, sizeof(buff)); 
-
-		// if msg contains "Exit" then server exit and chat ended. 
-		if (strncmp("exit", buff, 4) == 0) { 
-			printf("Server Exit...\n"); 
-			break; 
-		} 
-	} 
-} 
-
-// Driver function 
 int main() 
 { 
-	int sockfd, connfd, len; 
-	struct sockaddr_in servaddr, cli; 
-
-	// socket create and verification 
-	sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-	if (sockfd == -1) { 
-		printf("socket creation failed...\n"); 
-		exit(0); 
-	} 
-	else
-		printf("Socket successfully created..\n"); 
+	SOCKET_FILE_DESCRIPTOR socket_file_descriptor;
+	CLIENT_FILE_DESCRIPTOR client_file_descriptor;
+	struct sockaddr_in servaddr, clientaddr; 
+	auto creation_status = CreateSocket(&socket_file_descriptor);
+	if (creation_status == SOCKET_CREATION_STATUS::FAILURE) {
+		exit(EXIT_FAILURE);
+	}
+	LogSuccess("Socket do servidor criado com sucesso!");
 	bzero(&servaddr, sizeof(servaddr)); 
+	ConfigureServerAddress(servaddr);
+	// Conversão de tamanho de memória de server address in -> server address
+	SA* server_socket_address_ptr = reinterpret_cast<SA*>(&servaddr);
+	socklen_t server_socket_address_len = static_cast<socklen_t>(sizeof(servaddr));
+	BindSocket(socket_file_descriptor, server_socket_address_ptr, server_socket_address_len);
+	PrepareSocketToListen(socket_file_descriptor);
+	socklen_t client_socket_address_len = static_cast<socklen_t>(sizeof(clientaddr));
+	SA* client_socket_address_ptr = reinterpret_cast<SA*>(&clientaddr);
+	client_file_descriptor = AcceptClient(socket_file_descriptor, client_socket_address_ptr, client_socket_address_len);
+	CommunicateWithClient(client_file_descriptor); 
+	close(socket_file_descriptor); 
+}
 
-	// assign IP, PORT 
-	servaddr.sin_family = AF_INET; 
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
-	servaddr.sin_port = htons(PORT); 
+SOCKET_CREATION_STATUS CreateSocket(SOCKET_FILE_DESCRIPTOR* socket_file_descriptor) noexcept {
+	LogInfo("Criando socket para o servidor...");
+	*socket_file_descriptor = socket(AF_INET, SOCK_STREAM, 0); 
+	if (*socket_file_descriptor == SOCKET_CREATION_STATUS::FAILURE) { 
+		LogError("Não foi possível iniciar o servidor");
+		return SOCKET_CREATION_STATUS::FAILURE;
+	}
+	return SOCKET_CREATION_STATUS::SUCCESS;
+	
+}
 
-	// Binding newly created socket to given IP and verification 
-	if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) { 
-		printf("socket bind failed...\n"); 
-		exit(0); 
-	} 
-	else
-		printf("Socket successfully binded..\n"); 
+void ConfigureServerAddress(sockaddr_in& serverAddress) noexcept {
+	serverAddress.sin_family = AF_INET; 
+	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY); 
+	serverAddress.sin_port = htons(PORT);
+}
 
-	// Now server is ready to listen and verification 
-	if ((listen(sockfd, 5)) != 0) { 
-		printf("Listen failed...\n"); 
-		exit(0); 
-	} 
-	else
-		printf("Server listening..\n"); 
-	len = sizeof(cli); 
-    socklen_t sock_len = (socklen_t) len;
+void BindSocket(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* server_address, socklen_t& socket_length) {
+	auto socket_binding_status = bind(socket_file_descriptor, server_address, socket_length);
+	if (socket_binding_status != SOCKET_BIND_SUCCESS) {
+		LogError("Não foi possível ligar o socket do servidor...");
+		exit(EXIT_FAILURE);
+	}
+	LogInfo("Socket ligado com sucesso");
+}
 
-	// Accept the data packet from client and verification 
-	connfd = accept(sockfd, (SA*)&cli, &sock_len); 
+void PrepareSocketToListen(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor) {
+	LogInfo("Preparando o servidor para escutar requisições...");
+	if ((listen(socket_file_descriptor, NUM_OF_REQUESTS_QUEUED)) != SOCKET_SET_TO_LISTEN) { 
+		LogError("Não foi possível preparar o socket do servidor para escutar as requisições do cliente.");
+		exit(EXIT_FAILURE); 
+	}
+	LogInfo("Socket preparado para escutar requisições.");
+}
+
+CLIENT_FILE_DESCRIPTOR AcceptClient(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* client_address, socklen_t& client_socket_len) {
+	CLIENT_FILE_DESCRIPTOR connfd = accept(socket_file_descriptor, client_address, &client_socket_len); 
 	if (connfd < 0) { 
-		printf("server accept failed...\n"); 
-		exit(0); 
+		LogError("Ocorreu um erro ao conectar com o client.");
+		exit(EXIT_FAILURE); 
 	} 
-	else
-		printf("server accept the client...\n"); 
+	LogSuccess("Client conectado com sucesso.");
+	return connfd;
+}
 
-	// Function for chatting between client and server 
-	func(connfd); 
-
-	// After chatting close the socket 
-	close(sockfd); 
+using std::string;
+void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor) {
+	char buffer[MAX_MESSAGE_SIZE];
+	string exit_command{"exit"};
+	string goodbye_message{"Goodbye"};
+	string listen_message{"Listen"};
+	for (;;) {
+		string client_message{"Mensagem vinda do client: "};
+		read(client_socket_file_descriptor, buffer, sizeof(buffer));
+		buffer[MAX_MESSAGE_SIZE - 1] = '\0';
+		string client_command{buffer};
+		client_message.append(client_command);
+		LogInfo(client_message.c_str());
+		if (client_command == exit_command) {
+			WriteToClient(client_socket_file_descriptor, goodbye_message);
+			LogWarning("Servidor finalizando conexão...");
+			break;
+		}
+		LogInfo("Enviando sinal de vida...");
+		WriteToClient(client_socket_file_descriptor, listen_message);
+		bzero(buffer, MAX_MESSAGE_SIZE);
+	}
 }

@@ -1,3 +1,7 @@
+#include <iostream>
+#include <string> // resize e outras facilidades 
+#include <algorithm> // std::fill
+#include <typeinfo> // std::reinterpret_cast
 #include <arpa/inet.h> // inet_addr()
 #include <netdb.h>
 #include <stdio.h>
@@ -10,69 +14,45 @@
 #define PORT 8080
 #define SA struct sockaddr
 
+// Constantes
+constexpr int SERVER_PORT=8080;
+constexpr int NUM_OF_REQUESTS_QUEUED=5; // Número de requisições de conexão que serão aceitas;
+constexpr int SOCKET_BIND_SUCCESS=0;
+constexpr int SOCKET_SET_TO_LISTEN=0;
+constexpr int MAX_MESSAGE_SIZE=256;
+constexpr char NUL_DELIMITER='\0';
+const char* MESSAGE_READ="Mensagem Lida!";
+constexpr size_t MESSAGE_READ_SIZE=sizeof(MESSAGE_READ);
+const char* GOODBYE_MESSAGE="Goodbye";
+constexpr size_t GOODBYE_MESSAGE_SIZE=sizeof(GOODBYE_MESSAGE);
+// Definições de tipo
 typedef int SOCKET_FILE_DESCRIPTOR;
-
+typedef int CLIENT_FILE_DESCRIPTOR;
 typedef enum SOCKET_CREATION_STATUS {
-	SUCCESS = 1,
-	FAILURE = 0
+	SUCCESS = 0,
+	FAILURE = -1
 } SOCKET_CREATION_STATUS;
 
-SOCKET_CREATION_STATUS CreateSocket(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor) noexcept;
-
-
-void func(int sockfd)
-{
-	char buff[MAX];
-	int n;
-	for (;;) {
-		bzero(buff, sizeof(buff));
-		printf("Enter the string : ");
-		n = 0;
-		while ((buff[n++] = getchar()) != '\n')
-			;
-		write(sockfd, buff, sizeof(buff));
-		bzero(buff, sizeof(buff));
-		read(sockfd, buff, sizeof(buff));
-		printf("From Server : %s", buff);
-		if ((strncmp(buff, "exit", 4)) == 0) {
-			printf("Client Exit...\n");
-			break;
-		}
-	}
+// Funções inline
+inline void BzeroCppString(std::string& str) {
+	str.resize(MAX_MESSAGE_SIZE);
+	std::fill(str.begin(), str.end(), NUL_DELIMITER);
 }
 
-int main()
-{
-	int sockfd, connfd;
-	struct sockaddr_in servaddr, cli;
-
-	// socket create and verification
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd == -1) {
-		printf("socket creation failed...\n");
-		exit(0);
-	}
-	else
-		printf("Socket successfully created..\n");
-	bzero(&servaddr, sizeof(servaddr));
-
-	// assign IP, PORT
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	servaddr.sin_port = htons(PORT);
-
-	// connect the client socket to server socket
-	if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr))
-		!= 0) {
-		printf("connection with the server failed...\n");
-		exit(0);
-	}
-	else
-		printf("connected to the server..\n");
-
-	// function for chat
-	func(sockfd);
-
-	// close the socket
-	close(sockfd);
+inline void WriteToClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor, std::string& message) {
+	char* as_c_string=const_cast<char*>(message.data());
+	size_t size_of_c_string = sizeof(as_c_string);
+	write(client_socket_file_descriptor, as_c_string, size_of_c_string);
 }
+
+SOCKET_CREATION_STATUS CreateSocket(SOCKET_FILE_DESCRIPTOR* socket_file_descriptor) noexcept;
+
+void ConfigureServerAddress(sockaddr_in& serverAddress) noexcept;
+
+void BindSocket(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* server_address, socklen_t& socket_length);
+
+void PrepareSocketToListen(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor);
+
+CLIENT_FILE_DESCRIPTOR AcceptClient(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* client_address, socklen_t& client_socket_len);
+
+void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor);
