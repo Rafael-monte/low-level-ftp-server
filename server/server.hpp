@@ -1,3 +1,5 @@
+#ifndef __SERVER_HPP__ // Header guard
+#define __SERVER_HPP__
 #include <iostream>
 #include <string> // resize e outras facilidades 
 #include <algorithm> // std::fill
@@ -45,6 +47,7 @@ inline void WriteToClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor,
 	write(client_socket_file_descriptor, as_c_string, size_of_c_string);
 }
 
+// Funções
 SOCKET_CREATION_STATUS CreateSocket(SOCKET_FILE_DESCRIPTOR* socket_file_descriptor) noexcept;
 
 void ConfigureServerAddress(sockaddr_in& serverAddress) noexcept;
@@ -56,3 +59,5 @@ void PrepareSocketToListen(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor);
 CLIENT_FILE_DESCRIPTOR AcceptClient(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* client_address, socklen_t& client_socket_len);
 
 void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor);
+
+#endif // __SERVER_HPP__
