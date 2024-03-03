@@ -28,15 +28,11 @@ void CommunicateWithFTPServer(SOCKET_FILE_DESCRIPTOR socket_file_desc) {
 		PrintInput("Comando>");
 		keyboard_pivot = 0;
         WaitTyping(buff, keyboard_pivot); // Espera ocupada
-        if (TypedExit(buff)) {
-            LogError("Conexão abortada pelo cliente");
-            break;
-        }
 		write(socket_file_desc, buff, sizeof(buff));
 		bzero(buff, sizeof(buff));
 		read(socket_file_desc, buff, sizeof(buff));
 		char server_response[MAX_BUFFER_SIZE];
-		snprintf(server_response, SERVER_RESPONSE_MAX_LENGTH, "From Server: %s", buff);
+		snprintf(server_response, SERVER_RESPONSE_MAX_LENGTH, "Servidor: %s", buff);
 		LogInfo(server_response);
 		if (TypedExit(buff)) {
 			LogError("Conexão finalizada pelo servidor");

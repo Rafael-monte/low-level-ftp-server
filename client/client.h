@@ -13,8 +13,8 @@
 #define DEFAULT_PORT 8080
 #define SA struct sockaddr
 #define LOCALHOST "127.0.0.1"
-#define EXIT_COMM "exit"
-#define EXIT_COMM_SIZE 4
+#define EXIT_COMM "Goodbye"
+#define EXIT_COMM_SIZE 7
 #define CONNECTION_SUCCESS 0
 #define DEFAULT_PROTOCOL 0
 #define BAD_DESCRIPTOR -1

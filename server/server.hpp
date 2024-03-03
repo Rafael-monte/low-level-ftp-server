@@ -47,6 +47,13 @@ inline void WriteToClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor,
 	write(client_socket_file_descriptor, as_c_string, size_of_c_string);
 }
 
+inline bool TypedExit(std::string& client_message) {
+	char exit_command[]="exit";
+	constexpr size_t EXIT_SIZE=4;
+	const char* as_c_string=client_message.c_str();
+	return strncmp(exit_command, as_c_string, EXIT_SIZE) == 0;
+}
+
 // Funções
 SOCKET_CREATION_STATUS CreateSocket(SOCKET_FILE_DESCRIPTOR* socket_file_descriptor) noexcept;
 

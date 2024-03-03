@@ -43,12 +43,13 @@ void ConfigureServerAddress(sockaddr_in& serverAddress) noexcept {
 }
 
 void BindSocket(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* server_address, socklen_t& socket_length) {
+	LogInfo("Ligando socket...");
 	auto socket_binding_status = bind(socket_file_descriptor, server_address, socket_length);
 	if (socket_binding_status != SOCKET_BIND_SUCCESS) {
 		LogError("Não foi possível ligar o socket do servidor...");
 		exit(EXIT_FAILURE);
 	}
-	LogInfo("Socket ligado com sucesso");
+	LogSuccess("Socket ativado com sucesso.");
 }
 
 void PrepareSocketToListen(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor) {
@@ -57,7 +58,7 @@ void PrepareSocketToListen(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor) {
 		LogError("Não foi possível preparar o socket do servidor para escutar as requisições do cliente.");
 		exit(EXIT_FAILURE); 
 	}
-	LogInfo("Socket preparado para escutar requisições.");
+	LogSuccess("Socket preparado para escutar requisições na porta 8080.");
 }
 
 CLIENT_FILE_DESCRIPTOR AcceptClient(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* client_address, socklen_t& client_socket_len) {
@@ -83,12 +84,11 @@ void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor
 		string client_command{buffer};
 		client_message.append(client_command);
 		LogInfo(client_message.c_str());
-		if (client_command == exit_command) {
+		if (TypedExit(client_command)) {
 			WriteToClient(client_socket_file_descriptor, goodbye_message);
 			LogWarning("Servidor finalizando conexão...");
 			break;
 		}
-		LogInfo("Enviando sinal de vida...");
 		WriteToClient(client_socket_file_descriptor, listen_message);
 		bzero(buffer, MAX_MESSAGE_SIZE);
 	}
