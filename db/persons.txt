@@ -1,0 +1,51 @@
+#A
+Alex Johnson|1978-12-03|Hiking|Data Scientist
+Amanda Taylor|1982-06-25|Cooking|HR Manager
+Amelia Miller|1989-12-09|Skiing|Graphic Artist
+Aria Johnson|1983-11-23|Hiking|Event Coordinator
+#B
+Brandon Ward|1976-08-12|Traveling|Sales Manager
+Bryan Ward|1997-06-09|Paintball|IT Support Specialist
+#C
+Catherine Morris|1984-02-13|Running|UX/UI Designer
+Chris Miller|1993-09-18|Running|Financial Analyst
+#D
+Daniel Harris|1991-02-20|Cycling|Product Manager
+Dylan Harris|1977-09-22|Gaming|Financial Controller
+#E
+Ella Lewis|1983-12-17|Singing|Public Relations Specialist
+Emily Brown|1989-04-10|Photography|Marketing Manager
+Emma White|1990-02-16|Photography|Marketing Specialist
+#G
+George Anderson|1970-10-28|Fishing|Operations Manager
+Grace Turner|1993-03-30|Reading|Software Architect
+#H
+Hannah Reed|1986-03-24|Skiing|Project Manager
+#J
+Jake Foster|1998-09-03|Photography|Social Media Manager
+Jane Smith|1990-08-22|Painting|Graphic Designer
+John Doe|1985-05-15|Reading|Software Engineer
+#L
+Lila Taylor|1978-10-14|Dancing|Human Resources Director
+Leo Brown|1991-04-29|Chess|UX/UI Lead
+Lily Martinez|1995-01-12|Yoga|Content Writer
+Logan Ward|1987-06-18|Running|Customer Support Specialist
+Lucy Bell|1992-05-04|Painting|Customer Service Representative
+#M
+Matthew Collins|1973-04-26|Hiking|Operations Director
+Mia Hughes|1979-08-07|Reading|Accountant
+Michael White|1975-03-08|Traveling|Sales Representative
+Mila Turner|1974-02-03|Paintball|Project Coordinator
+#N
+Natalie Peterson|1996-07-19|Cooking|Marketing Coordinator
+#O
+Olivia Turner|1980-07-30|Dancing|Event Planner
+Oscar Clark|1985-07-01|Camping|Product Owner
+#R
+Robert Clark|1988-04-05|Chess|Software Developer
+#S
+Sophia Davis|1987-11-14|Gaming|UX Designer
+#V
+Victor Ramirez|1981-01-31|Cycling|Systems Analyst
+#Z
+Zachary Butler|1994-11-01|Gardening|Business Analyst
