@@ -1,8 +1,9 @@
 #include "../log.h"
 #include "server.hpp"
-
+#include "namesearcher.hpp"
 int main() 
 { 
+	
 	SOCKET_FILE_DESCRIPTOR socket_file_descriptor;
 	CLIENT_FILE_DESCRIPTOR client_file_descriptor;
 	struct sockaddr_in servaddr, clientaddr; 
@@ -86,10 +87,38 @@ void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor
 		LogInfo(client_message.c_str());
 		if (TypedExit(client_command)) {
 			WriteToClient(client_socket_file_descriptor, goodbye_message);
-			LogWarning("Servidor finalizando conexão...");
+			LogWarning("Servidor finalizando conexao...");
 			break;
 		}
-		WriteToClient(client_socket_file_descriptor, listen_message);
+		auto response = InterpretateCommand(client_command);
+		ShowMessageSent(response);
+		WriteToClient(client_socket_file_descriptor, response);
 		bzero(buffer, MAX_MESSAGE_SIZE);
 	}
+}
+
+std::string InterpretateCommand(std::string& command) {
+	auto personMap = CreatePersonsDataDictionary();
+	const string NAME_SEARCH_COMMAND{"find -n"};
+	const string OPERATION_NOT_FOUND{"Operacao nao encontrada..."};
+	size_t name_search_string = command.find(NAME_SEARCH_COMMAND);
+	if (name_search_string != string::npos) {
+		std::string name = command.substr(name_search_string + NAME_SEARCH_COMMAND.size() + 1);
+		auto personAsString = SearchByName(personMap,name);
+		return personAsString;
+	}
+	return OPERATION_NOT_FOUND;
+}
+
+
+void ShowMessageSent(const std::string& message) {
+	const string PREFIX{"Mensagem sendo enviada: "};
+	const string BITS{" bits)."};
+	string log{PREFIX};
+	log.append(message);
+	log.append(" (");
+	string message_size{std::to_string(message.size())};
+	log.append(message_size);
+	log.append(BITS);
+	LogInfo(log.c_str());
 }

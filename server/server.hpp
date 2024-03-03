@@ -12,6 +12,7 @@
 #include <strings.h> // bzero()
 #include <sys/socket.h>
 #include <unistd.h> // read(), write(), close()
+#include <utility>
 #define MAX 80
 #define PORT 8080
 #define SA struct sockaddr
@@ -34,6 +35,10 @@ typedef enum SOCKET_CREATION_STATUS {
 	SUCCESS = 0,
 	FAILURE = -1
 } SOCKET_CREATION_STATUS;
+typedef enum SERVER_OPERATION {
+	NAME_SEARCH,
+	NOT_FOUND,
+} SERVER_OPERATION;
 
 // Funções inline
 inline void BzeroCppString(std::string& str) {
@@ -43,7 +48,7 @@ inline void BzeroCppString(std::string& str) {
 
 inline void WriteToClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor, std::string& message) {
 	char* as_c_string=const_cast<char*>(message.data());
-	size_t size_of_c_string = sizeof(as_c_string);
+	size_t size_of_c_string = message.size();
 	write(client_socket_file_descriptor, as_c_string, size_of_c_string);
 }
 
@@ -66,5 +71,9 @@ void PrepareSocketToListen(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor);
 CLIENT_FILE_DESCRIPTOR AcceptClient(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* client_address, socklen_t& client_socket_len);
 
 void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor);
+
+std::string InterpretateCommand(std::string& command_string);
+
+void ShowMessageSent(const std::string& message);
 
 #endif // __SERVER_HPP__
