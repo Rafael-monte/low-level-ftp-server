@@ -1,0 +1,64 @@
+#A
+Ana Silva|23/05/1980|Dança|Engenheira
+André Oliveira|15/09/1992|Futebol|Analista de Dados
+Amanda Santos|10/03/1988|Pintura|Arquiteta
+#B
+Beatriz Lima|05/12/1995|Leitura|Designer Gráfica
+Bruno Costa|18/07/1984|Viagem|Professor
+Bianca Pereira|30/01/1990|Teatro|Advogada
+#C
+Carlos Souza|12/04/1976|Música|Desenvolvedor de Software
+Camila Almeida|08/11/1982|Ciclismo|Psicóloga
+Cauã Rocha|25/06/1998|Surfe|Estudante
+#D
+Daniela Pereira|14/02/1993|Yoga|Nutricionista
+Diego Oliveira|22/09/1979|Artes Marciais|Empresário
+Débora Santos|09/07/1987|Culinária|Bióloga
+#E
+Eduardo Costa|20/03/1985|Escalada|Engenheiro Eletricista
+Elaine Rocha|17/08/1991|Fotografia|Jornalista
+Enzo Lima|03/06/1997|Natação|Estudante de Medicina
+#F
+Fernanda Alves|28/05/1983|Jardinagem|Arquiteta Paisagista
+Felipe Santos|04/10/1996|Tênis|Estudante de Direito
+Flávia Oliveira|19/11/1989|Poesia|Professora
+#G
+Gabriel Lima|09/04/1974|Caminhada|Executivo de Vendas
+Giovanna Costa|16/01/1986|Tricô|Publicitária
+Guilherme Souza|21/07/1994|Pintura|Designer de Interiores
+#H
+Helena Almeida|07/12/1981|Cozinha|Economista
+Henrique Rocha|02/02/1999|Esgrima|Estudante de Engenharia
+#I
+Isabela Silva|01/06/1994|Fotografia|Designer de Moda
+Igor Santos|06/03/1980|Corrida|Engenheiro Civil
+#J
+Juliana Oliveira|27/08/1988|Viagem|Bióloga Marinha
+João Costa|13/05/1977|Teatro|Advogado
+José Pereira|24/09/1995|Tênis|Estudante de Psicologia
+#L
+Laura Alves|11/11/1984|Culinária|Nutricionista
+Lucas Lima|26/04/1991|Surfe|Empresário
+Larissa Souza|29/07/1997|Dança|Estudante de Artes
+#M
+Mariana Rocha|18/01/1973|Leitura|Professora
+Mateus Costa|07/10/1986|Futebol|Engenheiro Mecânico
+Monique Oliveira|03/02/1990|Música|Arquiteta
+#N
+Natália Santos|22/06/1993|Ciclismo|Bióloga
+Nicolas Lima|19/03/1987|Artes Marciais|Advogado
+#P
+Patrícia Almeida|14/09/1980|Yoga|Psicóloga
+Pedro Costa|28/02/1994|Escalada|Engenheiro de Produção
+#R
+Rafael Souza|06/05/1978|Pintura|Artista Plástico
+Renata Silva|23/10/1991|Fotografia|Jornalista
+#S
+Samuel Santos|09/07/1982|Jardinagem|Paisagista
+Sophia Costa|25/04/1996|Poesia|Estudante de Letras
+#T
+Thiago Lima|10/08/1975|Esgrima|Advogado
+Tatiane Oliveira|16/12/1989|Corrida|Fisioterapeuta
+#V
+Vinícius Rocha|05/01/1998|Natação|Estudante de Administração
+Vitória Alves|20/02/1983|Tricô|Estilista

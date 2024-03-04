@@ -21,7 +21,7 @@ typedef std::map<char, std::vector<Person>> PersonMap;
 
 PersonMap CreatePersonsDataDictionary() {
 std::filesystem::path currentPath = std::filesystem::current_path();
-    std::filesystem::path filePath = currentPath / "db" / "persons.txt";
+    std::filesystem::path filePath = currentPath / "db" / "en-US.txt";
 
     std::ifstream inputFile(filePath);
 
