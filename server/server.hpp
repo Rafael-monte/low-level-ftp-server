@@ -75,5 +75,4 @@ void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor
 std::string InterpretateCommand(std::string& command_string);
 
 void ShowMessageSent(const std::string& message);
-
 #endif // __SERVER_HPP__

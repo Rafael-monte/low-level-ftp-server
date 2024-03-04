@@ -1,6 +1,7 @@
 #include "../log.h"
 #include "server.hpp"
 #include "namesearcher.hpp"
+
 int main() 
 { 
 	
@@ -14,6 +15,7 @@ int main()
 	LogSuccess("Socket do servidor criado com sucesso!");
 	bzero(&servaddr, sizeof(servaddr)); 
 	ConfigureServerAddress(servaddr);
+	LogInfo(SelectedDatabase().c_str());
 	// Conversão de tamanho de memória de server address in -> server address
 	SA* server_socket_address_ptr = reinterpret_cast<SA*>(&servaddr);
 	socklen_t server_socket_address_len = static_cast<socklen_t>(sizeof(servaddr));
