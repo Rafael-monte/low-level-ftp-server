@@ -17,7 +17,7 @@ assembleServers() {
     echo "----------------------------"
     echo "Servidores montados com sucesso!"
     echo "Para executá-los, escreva:"
-    echo "./server_executable"
+    echo "./server_executable [pt-BR | en-US]"
     echo "./client_executable"
     echo "Nessa exata ordem e em terminais diferentes."
 }

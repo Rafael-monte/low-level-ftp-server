@@ -1,8 +1,7 @@
 #include "../log.h"
 #include "server.hpp"
-#include "namesearcher.hpp"
-
-int main() 
+#include "database_connector.cpp"
+int main(int argc, char** argv) 
 { 
 	
 	SOCKET_FILE_DESCRIPTOR socket_file_descriptor;
@@ -15,7 +14,7 @@ int main()
 	LogSuccess("Socket do servidor criado com sucesso!");
 	bzero(&servaddr, sizeof(servaddr)); 
 	ConfigureServerAddress(servaddr);
-	LogInfo(SelectedDatabase().c_str());
+	Database db(argv, argc);
 	// Conversão de tamanho de memória de server address in -> server address
 	SA* server_socket_address_ptr = reinterpret_cast<SA*>(&servaddr);
 	socklen_t server_socket_address_len = static_cast<socklen_t>(sizeof(servaddr));
@@ -24,7 +23,7 @@ int main()
 	socklen_t client_socket_address_len = static_cast<socklen_t>(sizeof(clientaddr));
 	SA* client_socket_address_ptr = reinterpret_cast<SA*>(&clientaddr);
 	client_file_descriptor = AcceptClient(socket_file_descriptor, client_socket_address_ptr, client_socket_address_len);
-	CommunicateWithClient(client_file_descriptor); 
+	CommunicateWithClient(client_file_descriptor, db); 
 	close(socket_file_descriptor); 
 }
 
@@ -75,7 +74,7 @@ CLIENT_FILE_DESCRIPTOR AcceptClient(SOCKET_FILE_DESCRIPTOR& socket_file_descript
 }
 
 using std::string;
-void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor) {
+void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor, Database& db) {
 	char buffer[MAX_MESSAGE_SIZE];
 	string exit_command{"exit"};
 	string goodbye_message{"Goodbye"};
@@ -92,21 +91,20 @@ void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor
 			LogWarning("Servidor finalizando conexao...");
 			break;
 		}
-		auto response = InterpretateCommand(client_command);
+		auto response = InterpretateCommand(client_command, db);
 		ShowMessageSent(response);
 		WriteToClient(client_socket_file_descriptor, response);
 		bzero(buffer, MAX_MESSAGE_SIZE);
 	}
 }
 
-std::string InterpretateCommand(std::string& command) {
-	auto personMap = CreatePersonsDataDictionary();
+std::string InterpretateCommand(std::string& command, Database& db) {
 	const string NAME_SEARCH_COMMAND{"find -n"};
 	const string OPERATION_NOT_FOUND{"Operacao nao encontrada..."};
 	size_t name_search_string = command.find(NAME_SEARCH_COMMAND);
 	if (name_search_string != string::npos) {
 		std::string name = command.substr(name_search_string + NAME_SEARCH_COMMAND.size() + 1);
-		auto personAsString = SearchByName(personMap,name);
+		auto personAsString = db.FindByName(name);
 		return personAsString;
 	}
 	return OPERATION_NOT_FOUND;
