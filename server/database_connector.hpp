@@ -34,7 +34,6 @@ class Database {
     Database(char** argv, int argc);
     string GetSelectedSchema();
     string FindByName(const string& name);
-    // vector<string> FindByNameStartingWith(const string& name); TODO
 };
 
 

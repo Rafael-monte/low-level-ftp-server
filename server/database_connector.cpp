@@ -1,19 +1,5 @@
 #include "database_connector.hpp"
 #include "../log.h"
-/**
- class Database {
-    private:
-        string SelectedSchema{""};
-        const char* DEFAULT_SCHEMA="en-US.txt";
-        bool LowLevelComparison(const string& str, const string& another_str);
-    public:
-    Database(char** argv, char* argc);
-    ~Database();
-    string GetSelectedSchema();
-    string FindByName(const string& name);
-    vector<string> FindByNameStartingWith(const string& name);
-};
-*/
 
 Database::Database(char** argv, int argc) {
     const vector<string> LOCALES{"en-US", "pt-BR"};
