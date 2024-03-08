@@ -10,6 +10,9 @@
 #include <string.h>
 #include <algorithm>
 
+const char* PT_BR_DB="pt-BR.txt";
+const char* EN_US_DB="en-US.txt";
+
 typedef struct Person {
     std::string Name;
     std::string BirthDate;
@@ -17,11 +20,29 @@ typedef struct Person {
     std::string Job;
 } Person;
 
+typedef enum DB {
+    EN_US=0,
+    PT_BR=1
+} DB;
+
 typedef std::map<char, std::vector<Person>> PersonMap;
+
+// Configuração do locale do banco
+constexpr DB SELECTED_DATABASE=DB::PT_BR;
+
+std::string GetSelectedDatabase(const DB& selected_database) {
+    switch(selected_database) {
+        case DB::PT_BR:
+            return std::string{PT_BR_DB};
+            break;
+        default:
+            return std::string{EN_US_DB}; 
+    }
+}
 
 PersonMap CreatePersonsDataDictionary() {
 std::filesystem::path currentPath = std::filesystem::current_path();
-    std::filesystem::path filePath = currentPath / "db" / "persons.txt";
+    std::filesystem::path filePath = currentPath / "db" / GetSelectedDatabase(SELECTED_DATABASE);
 
     std::ifstream inputFile(filePath);
 
@@ -88,6 +109,12 @@ std::string SearchByName(PersonMap& personMap, const std::string& name) {
         }
     }
     return NOT_FOUND;
+}
+
+std::string SelectedDatabase() {
+    std::string selected_db{"Locale do banco de dados: "};
+    selected_db+=GetSelectedDatabase(SELECTED_DATABASE);
+    return selected_db;
 }
 
 #endif // __NAMESEARCHER_HPP__
