@@ -13,7 +13,10 @@
 #include <sys/socket.h>
 #include <unistd.h> // read(), write(), close()
 #include <utility>
-#include "database_connector.hpp"
+#include <optional>
+#include "../db/database_connector.hpp"
+#include "server_factory.hpp"
+#include "abstract_server.hpp"
 #define MAX 80
 #define PORT 8080
 #define SA struct sockaddr
@@ -71,9 +74,12 @@ void PrepareSocketToListen(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor);
 
 CLIENT_FILE_DESCRIPTOR AcceptClient(SOCKET_FILE_DESCRIPTOR& socket_file_descriptor, SA* client_address, socklen_t& client_socket_len);
 
-void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor, Database& db);
+void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor, std::vector<AbstractServer*>& servers);
 
-std::string InterpretateCommand(std::string& command_string, Database& db);
+std::string InterpretateCommand(std::string& command_string, std::vector<AbstractServer*>& servers);
+
+std::optional<std::string> FindStringInServers(const std::string& name, std::vector<AbstractServer*>& servers);
 
 void ShowMessageSent(const std::string& message);
+
 #endif // __SERVER_HPP__
