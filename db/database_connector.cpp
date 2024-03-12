@@ -28,6 +28,16 @@ Database::Database(char** argv, int argc) {
     }
 }
 
+Database::Database(const string& locale) {
+    this->SelectedSchema=locale;
+    try {
+        this->Data=CreatePersonsDataDictionary();
+    } catch (std::exception* e) {
+        LogError("Não foi possível construir banco de dados");
+        exit(EXIT_FAILURE);
+    }
+}
+
 string Database::GetSelectedSchema() {
     const string EXTENSION{".txt"};
     return this->SelectedSchema+EXTENSION;

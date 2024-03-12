@@ -31,9 +31,10 @@ class Database {
         string trim(const string& str);
         string PersonToString(Person& personMap);
     public:
-    Database(char** argv, int argc);
-    string GetSelectedSchema();
-    string FindByName(const string& name);
+        Database(char** argv, int argc);
+        Database(const string& locale);
+        string GetSelectedSchema();
+        string FindByName(const string& name);
 };
 
 
