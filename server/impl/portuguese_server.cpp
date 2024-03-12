@@ -3,8 +3,11 @@
 using std::string;
 using std::optional;
 PortugueseServer::PortugueseServer(int port) {
+    LogInfo("Criando Servidor Brasileiro...");
+    LogInfo("Criando Banco de dados...");
     this->Db = new Database(this->GetDatabaseLocale());
     this->Port = port;
+    LogSuccess("Servidor Brasileiro criado com sucesso");
 }
 
 string PortugueseServer::GetDatabaseLocale() {
@@ -12,9 +15,11 @@ string PortugueseServer::GetDatabaseLocale() {
 }
 
 optional<string> PortugueseServer::FindByName(const string& name) {
+    std::string notFound = "Não foi possível encontrar a string \""+name+"\" no servidor brasileiro.";
     const std::string NOT_FOUND{"Not found"};
     string record = this->Db->FindByName(name);
     if (record == NOT_FOUND) {
+        LogWarning(notFound.c_str());
         return std::nullopt;
     }
     return optional<string>{record};

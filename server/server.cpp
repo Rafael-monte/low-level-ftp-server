@@ -1,9 +1,11 @@
 #include "../log.h"
 #include "server.hpp"
 #include "../db/database_connector.cpp"
-int main(int argc, char** argv) 
+#include "server_factory.cpp"
+int main() 
 {
-	
+	ServerFactory sf{};
+	std::vector<AbstractServer*> servers{sf.CreateEnglishServer(8080), sf.CreatePortugueseServer(8081)};
 	SOCKET_FILE_DESCRIPTOR socket_file_descriptor;
 	CLIENT_FILE_DESCRIPTOR client_file_descriptor;
 	struct sockaddr_in servaddr, clientaddr; 
@@ -14,7 +16,6 @@ int main(int argc, char** argv)
 	LogSuccess("Socket do servidor criado com sucesso!");
 	bzero(&servaddr, sizeof(servaddr)); 
 	ConfigureServerAddress(servaddr);
-	Database db(argv, argc);
 	// Conversão de tamanho de memória de server address in -> server address
 	SA* server_socket_address_ptr = reinterpret_cast<SA*>(&servaddr);
 	socklen_t server_socket_address_len = static_cast<socklen_t>(sizeof(servaddr));
@@ -23,7 +24,10 @@ int main(int argc, char** argv)
 	socklen_t client_socket_address_len = static_cast<socklen_t>(sizeof(clientaddr));
 	SA* client_socket_address_ptr = reinterpret_cast<SA*>(&clientaddr);
 	client_file_descriptor = AcceptClient(socket_file_descriptor, client_socket_address_ptr, client_socket_address_len);
-	CommunicateWithClient(client_file_descriptor, db); 
+	CommunicateWithClient(client_file_descriptor, servers);
+	for (auto server: servers) {
+		delete server;
+	}
 	close(socket_file_descriptor); 
 }
 
@@ -74,7 +78,7 @@ CLIENT_FILE_DESCRIPTOR AcceptClient(SOCKET_FILE_DESCRIPTOR& socket_file_descript
 }
 
 using std::string;
-void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor, Database& db) {
+void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor, std::vector<AbstractServer*>& servers) {
 	char buffer[MAX_MESSAGE_SIZE];
 	string exit_command{"exit"};
 	string goodbye_message{"Goodbye"};
@@ -91,23 +95,36 @@ void CommunicateWithClient(CLIENT_FILE_DESCRIPTOR& client_socket_file_descriptor
 			LogWarning("Servidor finalizando conexao...");
 			break;
 		}
-		auto response = InterpretateCommand(client_command, db);
+		auto response = InterpretateCommand(client_command, servers);
 		ShowMessageSent(response);
 		WriteToClient(client_socket_file_descriptor, response);
 		bzero(buffer, MAX_MESSAGE_SIZE);
 	}
 }
 
-std::string InterpretateCommand(std::string& command, Database& db) {
+std::string InterpretateCommand(std::string& command, std::vector<AbstractServer*>& servers) {
 	const string NAME_SEARCH_COMMAND{"find -n"};
 	const string OPERATION_NOT_FOUND{"Operacao nao encontrada..."};
 	size_t name_search_string = command.find(NAME_SEARCH_COMMAND);
-	if (name_search_string != string::npos) {
-		std::string name = command.substr(name_search_string + NAME_SEARCH_COMMAND.size() + 1);
-		auto personAsString = db.FindByName(name);
-		return personAsString;
+	if (name_search_string == string::npos) {
+		return OPERATION_NOT_FOUND;
 	}
-	return OPERATION_NOT_FOUND;
+
+	std::string name = command.substr(name_search_string + NAME_SEARCH_COMMAND.size() + 1);
+	name.erase(std::remove(name.begin(), name.end(), '\n'), name.end());
+	return FindStringInServers(name, servers).value_or("Not found");
+}
+
+std::optional<std::string> FindStringInServers(const std::string& name, std::vector<AbstractServer*>& servers) {
+	for (const auto server: servers) {
+		std::string findingMessage="Procurando a string \""+name+"\" no servidor <"+server->GetDatabaseLocale()+">";
+		LogInfo(findingMessage.c_str());
+		auto opt_person=server->FindByName(name);
+		if (opt_person.has_value()) {
+			return opt_person;
+		}
+	}
+	return std::nullopt;
 }
 
 

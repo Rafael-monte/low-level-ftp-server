@@ -13,8 +13,6 @@ class AbstractServer {
         virtual std::optional<std::string> FindByName(const std::string& name)=PURE;
         virtual std::string GetDatabaseLocale()=PURE;
         virtual int GetPort()=PURE;
-        ~AbstractServer() {};   
+        virtual ~AbstractServer()=default;   
 };
-
-
 #endif
