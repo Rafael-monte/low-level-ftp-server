@@ -14,6 +14,7 @@
 #include <unistd.h> // read(), write(), close()
 #include <utility>
 #include <optional>
+#include <sys/wait.h>
 #include "../db/database_connector.hpp"
 #include "server_factory.hpp"
 #include "abstract_server.hpp"

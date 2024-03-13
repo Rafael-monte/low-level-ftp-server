@@ -109,22 +109,59 @@ std::string InterpretateCommand(std::string& command, std::vector<AbstractServer
 	if (name_search_string == string::npos) {
 		return OPERATION_NOT_FOUND;
 	}
-
 	std::string name = command.substr(name_search_string + NAME_SEARCH_COMMAND.size() + 1);
 	name.erase(std::remove(name.begin(), name.end(), '\n'), name.end());
 	return FindStringInServers(name, servers).value_or("Not found");
 }
 
+
 std::optional<std::string> FindStringInServers(const std::string& name, std::vector<AbstractServer*>& servers) {
-	for (const auto server: servers) {
-		std::string findingMessage="Procurando a string \""+name+"\" no servidor <"+server->GetDatabaseLocale()+">";
-		LogInfo(findingMessage.c_str());
-		auto opt_person=server->FindByName(name);
-		if (opt_person.has_value()) {
-			return opt_person;
-		}
-	}
-	return std::nullopt;
+	constexpr int PIPE_OPERATIONS{2}; // Representa as 2 partes do pipe ("leitura e escrita")
+	std::vector<std::array<int, PIPE_OPERATIONS>> pipes{servers.size()};  // Array com vários pipes ("Um para cada servidor")
+    constexpr int READ_END = 0;
+    constexpr int WRITE_END = 1;
+
+    // Começa a criar processos filhos de cada servidor
+    for (std::size_t i = 0; i < servers.size(); ++i) {
+        if (pipe(pipes[i].data()) == -1) {
+            perror("Pipe creation failed");
+            exit(EXIT_FAILURE);
+        }
+        pid_t pid = fork();
+        if (pid == -1) {
+            perror("Fork failed");
+            exit(EXIT_FAILURE);
+        } else if (pid == 0) {  // Verifica se é processo filho
+            close(pipes[i][READ_END]);  // Fecha a parte de leitura do pipe
+
+            // Redireciona a parte de leitura do pipe para o standard output (stdout)
+            dup2(pipes[i][WRITE_END], STDOUT_FILENO);
+            close(pipes[i][WRITE_END]);  // Fecha a parte de leitura do pipe
+
+            // Faz a busca no servidor conectado ao pipe
+            auto opt_person = servers[i]->FindByName(name);
+            if (opt_person.has_value()) {
+                std::string result{opt_person.value()};
+                write(STDOUT_FILENO, result.c_str(), result.size());
+            }
+            _exit(EXIT_SUCCESS);  // Finaliza o processo filho
+        } else {  // Processo pai
+            close(pipes[i][WRITE_END]);  // Fecha o a parte de leitura do processo pai (ele não precisa escrever, apenas ler)
+        }
+    }
+
+	// Espera um processo finalizar a busca e captura a mensagem pelo pipe
+    for (std::size_t i = 0; i < servers.size(); ++i) {
+        char buffer[MAX_MESSAGE_SIZE];
+        ssize_t bytesRead = read(pipes[i][READ_END], buffer, sizeof(buffer)); // Lê o conteudo do pipe e manda pra um buffer
+        if (bytesRead > 0) { // Se o buffer tiver alguma coisa...
+            close(pipes[i][READ_END]);  // Fecha a parte de leitura do pipe
+            return std::string(buffer, bytesRead); // Retorna a mensagem capturada da mensagem
+        }
+        close(pipes[i][READ_END]);  // Fecha os outros pipes que não capturaram nada
+    }
+
+    return std::nullopt; // Se nada for capturado, retorna um null option
 }
 
 
