@@ -117,18 +117,17 @@ std::string InterpretateCommand(std::string& command, std::vector<AbstractServer
 
 std::optional<std::string> FindStringInServers(const std::string& name, std::vector<AbstractServer*>& servers) {
 	constexpr int PIPE_OPERATIONS{2}; // Representa as 2 partes do pipe ("leitura e escrita")
+    constexpr int READ_END = 0; // Parte de leitura
+    constexpr int WRITE_END = 1; // Parte de escrita
 	std::vector<std::array<int, PIPE_OPERATIONS>> pipes{servers.size()};  // Array com vários pipes ("Um para cada servidor")
-    constexpr int READ_END = 0;
-    constexpr int WRITE_END = 1;
-
     // Começa a criar processos filhos de cada servidor
     for (std::size_t i = 0; i < servers.size(); ++i) {
         if (pipe(pipes[i].data()) == -1) {
             perror("Pipe creation failed");
             exit(EXIT_FAILURE);
         }
-        pid_t pid = fork();
-        if (pid == -1) {
+        pid_t pid = fork(); // Inicia um novo processo via fork
+        if (pid == -1) { // Se o retorno do fork é -1, então ocorreu um erro
             perror("Fork failed");
             exit(EXIT_FAILURE);
         } else if (pid == 0) {  // Verifica se é processo filho
