@@ -5,7 +5,7 @@
 int main() 
 {
 	ServerFactory sf{};
-	std::vector<AbstractServer*> servers{sf.CreateEnglishServer(8080), sf.CreatePortugueseServer(8081)};
+	std::vector<AbstractServer*> servers{sf.CreateAllServers(PORT)};
 	SOCKET_FILE_DESCRIPTOR socket_file_descriptor;
 	CLIENT_FILE_DESCRIPTOR client_file_descriptor;
 	struct sockaddr_in servaddr, clientaddr; 

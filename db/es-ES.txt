@@ -1,0 +1,51 @@
+#A
+Alejandro Perez|03/12/1978|Senderismo|Científico de Datos
+Ana Lopez|25/06/1982|Cocina|Gerente de Recursos Humanos
+Andres Martinez|09/12/1989|Esquiar|Artista Gráfico
+Ana Jimenez|23/11/1983|Senderismo|Coordinador de Eventos
+#B
+Bruno Sanchez|12/08/1976|Viajar|Gerente de Ventas
+Belen Sanchez|09/06/1997|Paintball|Especialista en Soporte de TI
+#C
+Carla Morales|13/02/1984|Correr|Diseñador UX/UI
+Carlos Molina|18/09/1993|Correr|Analista Financiero
+#D
+Diego Hernandez|20/02/1991|Ciclismo|Gerente de Producto
+David Hernandez|22/09/1977|Juegos|Controlador Financiero
+#E
+Elena Gutierrez|17/12/1983|Cantar|Especialista en Relaciones Públicas
+Eva Blanco|10/04/1989|Fotografía|Gerente de Marketing
+Emma Rojas|16/02/1990|Fotografía|Especialista en Marketing
+#G
+Gabriel Alvarez|28/10/1970|Pescar|Gerente de Operaciones
+Gloria Torres|30/03/1993|Leer|Arquitecto de Software
+#H
+Hugo Ramos|24/03/1986|Esquiar|Gerente de Proyecto
+#J
+Juan Reyes|03/09/1998|Fotografía|Gerente de Redes Sociales
+Juana Garcia|22/08/1990|Pintura|Diseñador Gráfico
+Jose Diaz|15/05/1985|Leer|Ingeniero de Software
+#L
+Luisa Torres|14/10/1978|Bailar|Director de Recursos Humanos
+Leo Blanco|29/04/1991|Ajedrez|Líder UX/UI
+Lola Morales|12/01/1995|Yoga|Escritor de Contenido
+Luis Guerra|18/06/1987|Correr|Especialista en Soporte al Cliente
+Lucia Gomez|04/05/1992|Pintura|Representante de Servicio al Cliente
+#M
+Manuel Fernandez|26/04/1973|Senderismo|Director de Operaciones
+Maria Hernandez|07/08/1979|Leer|Contador
+Miguel Blanco|08/03/1975|Viajar|Representante de Ventas
+Marta Torres|03/02/1974|Paintball|Coordinador de Proyecto
+#N
+Natalia Rodriguez|19/07/1996|Cocina|Coordinador de Marketing
+#O
+Oscar Torres|30/07/1980|Bailar|Planificador de Eventos
+Omar Castillo|01/07/1985|Camping|Propietario de Producto
+#R
+Roberto Castillo|05/04/1988|Ajedrez|Desarrollador de Software
+#S
+Sofia Perez|14/11/1987|Juegos|Diseñador UX
+#V
+Victor Ramirez|31/01/1981|Ciclismo|Analista de Sistemas
+#Z
+Zacarias Lopez|01/11/1994|Jardinería|Analista de Negocios
