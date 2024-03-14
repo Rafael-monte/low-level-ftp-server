@@ -14,17 +14,21 @@ string PortugueseServer::GetDatabaseLocale() {
     return this->Locale;
 }
 
-optional<string> PortugueseServer::FindByName(const string& name) {
-    const std::string NOT_FOUND{"Not found"};
-    string record = this->Db->FindByName(name);
-    if (record == NOT_FOUND) {
-        return std::nullopt;
-    }
-    return optional<string>{record};
-}
+// optional<string> PortugueseServer::FindByName(const string& name) {
+//     const std::string NOT_FOUND{"Not found"};
+//     string record = this->Db->FindByName(name);
+//     if (record == NOT_FOUND) {
+//         return std::nullopt;
+//     }
+//     return optional<string>{record};
+// }
 
 int PortugueseServer::GetPort() {
     return this->Port;
+}
+
+Database* PortugueseServer::GetDatabase() {
+    return this->Db;
 }
 
 PortugueseServer::~PortugueseServer() {

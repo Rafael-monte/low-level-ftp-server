@@ -12,9 +12,9 @@ class PortugueseServer: public AbstractServer {
         int Port;
     public:
         PortugueseServer(int port);
-        std::optional<std::string> FindByName(const std::string& name);
-        int GetPort();
-        std::string GetDatabaseLocale();
+        int GetPort() override;
+        std::string GetDatabaseLocale() override;
+        Database* GetDatabase() override;
         ~PortugueseServer();
 };
 

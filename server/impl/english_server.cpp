@@ -14,17 +14,12 @@ string EnglishServer::GetDatabaseLocale() {
     return this->Locale;
 }
 
-std::optional<std::string> EnglishServer::FindByName(const string& name) {
-    const std::string NOT_FOUND{"Not found"};
-    string record = this->Db->FindByName(name);
-    if (record == NOT_FOUND) {
-        return std::nullopt;
-    }
-    return std::optional<string>{record};
-}
-
 int EnglishServer::GetPort() {
     return this->Port;
+}
+
+Database* EnglishServer::GetDatabase() {
+    return this->Db;
 }
 
 EnglishServer::~EnglishServer() {
