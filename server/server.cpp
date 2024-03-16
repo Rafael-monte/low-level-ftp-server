@@ -119,8 +119,12 @@ std::optional<std::string> FindStringInServers(const std::string& name, std::vec
 	constexpr int PIPE_OPERATIONS{2}; // Representa as 2 partes do pipe ("leitura e escrita")
     constexpr int READ_END = 0; // Parte de leitura
     constexpr int WRITE_END = 1; // Parte de escrita
+	sem_t semaforo;
+	sem_init(&semaforo, 0, 1);
 	std::vector<std::array<int, PIPE_OPERATIONS>> pipes{servers.size()};  // Array com vários pipes ("Um para cada servidor")
-    // Começa a criar processos filhos de cada servidor
+	//Espera o semáforo antes de entrar na região crítica
+	sem_wait(&semaforo);
+	// Começa a criar processos filhos de cada servidor
     for (std::size_t i = 0; i < servers.size(); ++i) {
         if (pipe(pipes[i].data()) == -1) {
             perror("Pipe creation failed");
@@ -148,8 +152,9 @@ std::optional<std::string> FindStringInServers(const std::string& name, std::vec
             close(pipes[i][WRITE_END]);  // Fecha o a parte de leitura do processo pai (ele não precisa escrever, apenas ler)
         }
     }
-
-	// Espera um processo finalizar a busca e captura a mensagem pelo pipe
+	// Tira o semáforo após sair da região crítica
+	sem_post(&semaforo);
+	// Captura as mensagens pelos pipes
     for (std::size_t i = 0; i < servers.size(); ++i) {
         char buffer[MAX_MESSAGE_SIZE];
         ssize_t bytesRead = read(pipes[i][READ_END], buffer, sizeof(buffer)); // Lê o conteudo do pipe e manda pra um buffer
