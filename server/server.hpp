@@ -15,6 +15,7 @@
 #include <utility>
 #include <optional>
 #include <sys/wait.h>
+#include <semaphore.h>
 #include "../db/database_connector.hpp"
 #include "server_factory.hpp"
 #include "abstract_server.hpp"
